@@ -1,3 +1,5 @@
 venv/
 test.py
 *.txt
+silero_punkt/
+weights/
