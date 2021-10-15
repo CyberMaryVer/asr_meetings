@@ -4,6 +4,7 @@ import pydub
 from vosk_transcriber import vosk_transcribe
 from silero_punctuation import apply_punkt_to_text
 from spacy_formatter import format_for_streamlit
+from get_weights import check_and_load
 from datetime import datetime
 from PIL import Image
 import os
@@ -190,5 +191,6 @@ def main():
 
 if __name__ == "__main__":
     # page settings
+    check_and_load()
     st.set_page_config(page_title="web-app", page_icon=":vhs:", layout="wide")
     main()
