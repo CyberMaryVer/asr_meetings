@@ -13,8 +13,7 @@ def vosk_transcribe(filedir="audio", logfile="text.txt", num=None):
     if not os.path.exists("weights/vosk-model-small-ru"):
         print(
             "Please download the model from https://alphacephei.com/vosk/models and unpack as 'model' in the current folder.")
-        # exit (1)
-    print(filedir, os.listdir(filedir))
+
     audio_files = os.listdir(filedir)
     model = Model("weights/vosk-model-small-ru")
 
@@ -46,7 +45,7 @@ def vosk_transcribe(filedir="audio", logfile="text.txt", num=None):
         with open(logfile, "a", encoding="utf-8") as writer:
             writer.write(res["text"] + "\n")
 
-        print(res["text"])
+        # print(res["text"])
     # print("Done!")
     return 1
 

@@ -1,3 +1,12 @@
-## Text summarization
-![img](https://miro.medium.com/max/1064/1*GIVviyN9Q0cqObcy-q-juQ.png)
+## Text punctuation and NER selection
+
+#### API for debugging
+![img](images/demo.gif)
+
+#### Usage
+```shell
+git clone {repo}
+pip install -r requirements.txt
+streamlit run app.py
+```
 ----

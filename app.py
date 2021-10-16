@@ -1,13 +1,14 @@
 import streamlit as st
-from pathlib import Path
-import pydub
+from PIL import Image
+from time import time
+import os
+
+from preprocess_audio import save_audio
 from vosk_transcriber import vosk_transcribe
 from silero_punctuation import apply_punkt_to_text
 from spacy_formatter import format_for_streamlit
 from get_weights import check_and_load
-from datetime import datetime
-from PIL import Image
-import os
+
 
 # SETTINGS
 model_settings = {"Vosk": {"MICROSERVICE": "0.0.0.0", "ENABLED": "True"},
@@ -20,87 +21,90 @@ def show_img(img_path, width=300):
     st.image(img_to_show, width=width)
 
 
-def get_counter_code(counter, level=3):
-    zeros = "0" * (level - len(str(counter)))
-    code = f"{zeros}{counter}"
-    return code
-
-
-def clear_folder(folder):
-    # clear the folder to avoid storage overload
-    for filename in os.listdir(folder):
-        file_path = os.path.join(folder, filename)
-        try:
-            if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-        except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
-
-
-def split_on_chunks(sound, folder="audio"):
-    from pydub.silence import split_on_silence
-
-    # sound = AudioSegment.from_file("/path/to/file.mp3", format="mp3")
-
-    chunks = split_on_silence(
-        sound,
-
-        # split on silences longer than 1000ms (1 sec)
-        min_silence_len=1000,
-
-        # anything under -16 dBFS is considered silence
-        silence_thresh=-42,
-
-        # keep 200 ms of leading/trailing silence
-        keep_silence=200
-    )
-    for idx, chunk in enumerate(chunks[1:]):
-        code = get_counter_code(idx)
-        chunk_name = f"chunk_{code}.wav"
-        save_path = Path(folder) / chunk_name
-        chunk.export(save_path, format="wav")
-        print(f"chunk_{code} is saved")
-
-    return chunks
-
-
-@st.cache()
-def save_audio(file, folder="audio"):
-    os.makedirs(folder, exist_ok=True)
-    datetoday = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-
-    # clear the folder to avoid storage overload
-    clear_folder(folder)
-
-    try:
-        with open("log.txt", "a") as f:
-            f.write(f"{file.name} - {file.size} - {datetoday};\n")
-    except Exception as e:
-        print(f"{type(e)}: {e}")
-
-    if file.name.endswith("wav"):
-        audio = pydub.AudioSegment.from_wav(file)
-    elif file.name.endswith("ogg"):
-        audio = pydub.AudioSegment.from_ogg(file)
-    elif file.name.endswith('mp3'):
-        audio = pydub.AudioSegment.from_mp3(file)
-    elif file.name.endswith('m4a'):
-        audio = pydub.AudioSegment.from_file(file, "m4a")
-    elif file.name.endswith("aac"):
-        audio = pydub.AudioSegment.from_file(file, "aac")
-    else:
-        return 1
-
-    audio = audio.set_channels(1)
-    audio = audio.set_frame_rate(16000)
-    split_on_chunks(audio, folder=folder)
-    # for chunk in chunks:
-    #     save_path = Path(folder) / (chunk.chunkname + ".wav")
-    #     audio.export(save_path, format="wav")
-    # save_path = Path(folder) / (file.name + ".wav")
-    # audio.export(save_path, format="wav")
-
-    return 0
+# def get_counter_code(counter, level=3):
+#     zeros = "0" * (level - len(str(counter)))
+#     code = f"{zeros}{counter}"
+#     return code
+#
+#
+# def clear_folder(folder):
+#     # clear the folder to avoid storage overload
+#     for filename in os.listdir(folder):
+#         file_path = os.path.join(folder, filename)
+#         try:
+#             if os.path.isfile(file_path) or os.path.islink(file_path):
+#                 os.unlink(file_path)
+#         except Exception as e:
+#             print('Failed to delete %s. Reason: %s' % (file_path, e))
+#
+#
+# def split_on_chunks(sound, folder="audio"):
+#     from pydub.silence import split_on_silence, detect_silence
+#     dBFS = sound.dBFS
+#     # sound = AudioSegment.from_file("/path/to/file.mp3", format="mp3")
+#     silence = detect_silence(sound, min_silence_len=1000, silence_thresh=dBFS - 16)
+#     silence = [((start / 1000), (stop / 1000)) for start, stop in silence]  # in sec
+#     print(silence)
+#
+#     chunks = split_on_silence(
+#         sound,
+#
+#         # split on silences longer than 1000ms (1 sec)
+#         min_silence_len=1000,
+#
+#         # anything under -16 dBFS is considered silence
+#         silence_thresh=dBFS-16,
+#
+#         # keep 200 ms of leading/trailing silence
+#         keep_silence=100
+#     )
+#     for idx, chunk in enumerate(chunks[1:]):
+#         code = get_counter_code(idx)
+#         chunk_name = f"chunk_{code}.wav"
+#         save_path = Path(folder) / chunk_name
+#         chunk.export(save_path, format="wav")
+#         # print(f"chunk_{code} is saved")
+#
+#     return chunks
+#
+#
+# @st.cache()
+# def save_audio(file, folder="audio"):
+#     os.makedirs(folder, exist_ok=True)
+#     datetoday = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+#
+#     # clear the folder to avoid storage overload
+#     clear_folder(folder)
+#
+#     try:
+#         with open("log.txt", "a") as f:
+#             f.write(f"{file.name} - {file.size} - {datetoday};\n")
+#     except Exception as e:
+#         print(f"{type(e)}: {e}")
+#
+#     if file.name.endswith("wav"):
+#         audio = pydub.AudioSegment.from_wav(file)
+#     elif file.name.endswith("ogg"):
+#         audio = pydub.AudioSegment.from_ogg(file)
+#     elif file.name.endswith('mp3'):
+#         audio = pydub.AudioSegment.from_mp3(file)
+#     elif file.name.endswith('m4a'):
+#         audio = pydub.AudioSegment.from_file(file, "m4a")
+#     elif file.name.endswith("aac"):
+#         audio = pydub.AudioSegment.from_file(file, "aac")
+#     else:
+#         return 1
+#
+#     audio = audio.set_channels(1)
+#     audio = audio.set_frame_rate(16000)
+#     split_on_chunks(audio, folder=folder)
+#     # for chunk in chunks:
+#     #     save_path = Path(folder) / (chunk.chunkname + ".wav")
+#     #     audio.export(save_path, format="wav")
+#     # save_path = Path(folder) / (file.name + ".wav")
+#     # audio.export(save_path, format="wav")
+#
+#     return 0
 
 
 def main():
@@ -136,9 +140,9 @@ def main():
                         os.makedirs("audio")
                     with st.spinner("Идет загрузка аудио..."):
                         is_saved = save_audio(audio_file)
-                    if is_saved == 1:
-                        st.warning("File size is too large. Try another file.")
-                    elif is_saved == 0:
+                    if not is_saved:
+                        st.warning("Файл не сохранен. Попробуйте еще раз.")
+                    elif is_saved:
                         try:
                             st.audio(audio_file, format='audio/wav', start_time=0)
                         except Exception as e:
