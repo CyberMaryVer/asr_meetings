@@ -33,8 +33,8 @@ def download_silero():
 def download_vosk(small=True):
     os.makedirs("weights", exist_ok=True)
     asr_model_path = VOSK_WEIGHTS[1] if small else VOSK_WEIGHTS[0]
-    subprocess.run(f"wget -O {PATH_TO_DATA}/model.zip {asr_model_path}")
-    subprocess.run(f"unzip {PATH_TO_DATA}/model.zip -d /weights/")
+    subprocess.run(f"wget -O model.zip {asr_model_path}")
+    subprocess.run(f"unzip model.zip -d /weights/")
     subprocess.run("mv \"vosk-model-small-ru-0.15\" vosk-model-small-ru")
 
 
