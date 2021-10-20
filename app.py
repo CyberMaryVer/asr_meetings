@@ -25,7 +25,7 @@ def show_img(img_path, width=300):
     st.image(img_to_show, width=width)
 
 
-@st.cache
+# @st.cache
 def get_weights():
     check_and_load()
 
