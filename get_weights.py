@@ -36,7 +36,7 @@ def download_vosk(small=True):
     # asr_model_path = VOSK_WEIGHTS[1] if small else VOSK_WEIGHTS[0]
 
     url = 'https://drive.google.com/uc?id=qmOQk0j1430iHBGzQqMT5duqGHuUJQXo'
-    output = 'model.zip'
+    output = f'{PATH_TO_DATA}/model.zip'
     gdown.download(url, output, quiet=False)
 
     # subprocess.run(f"wget -O {PATH_TO_DATA}/model.zip {asr_model_path}")
