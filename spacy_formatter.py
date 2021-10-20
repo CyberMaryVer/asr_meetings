@@ -12,8 +12,8 @@ def format_red_text(text, url=""):
 
 def entity_info(text, eob):
     ent_info = f'''<b style="font-size:8px">    {eob}</b>''' if eob else ""
-    return f'''<span style="background: rgb(246, 241, 234); padding: 0.45em 0.6em; margin: 0px 0.25em; line-height: '
-                f'1; border-radius: 0.35em;">{text}{ent_info}</span>'''
+    return f'''<span style="background: rgb(246, 241, 234); padding: 0.2em 0.2em; margin: 0px 0.25em; line-height: '
+                f'1; border-radius: 0.35em; border: 2px solid rgb(186, 0, 0);">{text}{ent_info}</span>'''
 
 
 def text2tokens(text, ents):

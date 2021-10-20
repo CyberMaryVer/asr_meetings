@@ -7,22 +7,24 @@ import json
 import os
 
 
-def vosk_transcribe(filedir="audio", logfile="text.txt", num=None):
+def vosk_transcribe(filedir="audio", logfile="text.txt", num=None, vosk_model="small"):
     # SetLogLevel(-1)
 
-    if not os.path.exists("weights/vosk-model-small-ru"):
-        print(
-            "Please download the model from https://alphacephei.com/vosk/models and unpack as 'model' in the current folder.")
+    if vosk_model in ["small", "large"]:
+        model_path = f"weights/vosk-model-{vosk_model}-ru"
+    else:
+        raise AttributeError("vosk_model attribute value should be \"large\" or \"small\"")
 
-    audio_files = os.listdir(filedir)
-    model = Model("weights/vosk-model-small-ru")
+    if not os.path.exists(model_path):
+        print("Please download the model from https://alphacephei.com/vosk/models")
 
+    model = Model(model_path)
     # Large vocabulary free form recognition
     rec = KaldiRecognizer(model, 16000)
-
     # You can also specify the possible word list
     # rec = KaldiRecognizer(model, 16000, "zero oh one two three four five six seven eight nine")
 
+    audio_files = os.listdir(filedir)
     num = len(audio_files) if num is None else num
 
     with open(logfile, "w", encoding="utf-8") as writer:
