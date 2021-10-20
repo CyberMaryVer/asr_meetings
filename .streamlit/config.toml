@@ -4,4 +4,5 @@ primaryColor="#cc2222"
 secondaryBackgroundColor="#f6f1ea"
 font="sans serif"
 [server]
-maxUploadSize=1028
+maxUploadSize=10
+#maxUploadSize=1028

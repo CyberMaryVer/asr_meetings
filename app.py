@@ -158,8 +158,8 @@ def main():
                         st.audio("test.wav", format='audio/wav', start_time=0)
                         st.session_state.update({"test": "true"})
             with col2:
-                st.markdown("Модель:")
-                st.write(model_settings[model])
+                # st.markdown("Модель:")
+                # st.write(model_settings[model])
                 st.markdown("Статус:")
                 if audio_file is not None:
                     st.success("Файл загружен")
