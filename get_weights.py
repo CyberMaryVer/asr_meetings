@@ -9,6 +9,7 @@ PATH_TO_DATA = os.path.dirname(__file__)
 # VOSK
 VOSK_WEIGHTS = ["https://alphacephei.com/kaldi/models/vosk-model-ru-0.10.zip",
                 "https://alphacephei.com/vosk/models/vosk-model-small-ru-0.15.zip"]
+VOSK_DIR = os.path.join(PATH_TO_DATA, "weights")
 
 # SILERO
 SILERO_DIR = "silero_punkt"
@@ -32,16 +33,20 @@ def download_silero():
 
 
 def download_vosk(small=True):
-    os.makedirs(f"{PATH_TO_DATA}/weights", exist_ok=True)
-    # asr_model_path = VOSK_WEIGHTS[1] if small else VOSK_WEIGHTS[0]
+    import urllib.request
+    import zipfile
 
-    url = 'https://drive.google.com/uc?id=qmOQk0j1430iHBGzQqMT5duqGHuUJQXo'
-    output = f'{PATH_TO_DATA}/model.zip'
-    gdown.download(url, output, quiet=False)
+    os.makedirs(VOSK_DIR, exist_ok=True)
+    asr_model_path = VOSK_WEIGHTS[1] if small else VOSK_WEIGHTS[0]
+    response = urllib.request.urlopen(asr_model_path)
+    binary_file = response.read()
+    with open(f'{PATH_TO_DATA}/weights/model.zip', 'wb') as writer:
+        writer.write(binary_file)
 
-    # subprocess.run(f"wget -O {PATH_TO_DATA}/model.zip {asr_model_path}")
-    subprocess.run(f"unzip {PATH_TO_DATA}/model.zip -d /weights/")
-    subprocess.run(f"mv \"vosk-model-small-ru-0.15\" vosk-model-small-ru")
+    with zipfile.ZipFile(os.path.join(VOSK_DIR, "model.zip"), "r") as zip_ref:
+        zip_ref.extractall(VOSK_DIR)
+    os.rename(os.path.join(VOSK_DIR, "vosk-model-small-ru-0.15"),
+              os.path.join(VOSK_DIR, "vosk-model-small-ru"))
 
 
 def check_and_load(verbose=True):
