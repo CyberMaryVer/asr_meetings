@@ -4,7 +4,7 @@ import yaml
 import torch
 import gdown
 
-PATH_TO_DATA = "."
+PATH_TO_DATA = os.path.dirname(__file__)
 
 # VOSK
 VOSK_WEIGHTS = ["https://alphacephei.com/kaldi/models/vosk-model-ru-0.10.zip",
