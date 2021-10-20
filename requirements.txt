@@ -6,4 +6,5 @@ streamlit==1.0.0
 torch==1.9.1
 torchaudio==0.9.1
 vosk==0.3.31
+gdown
 
