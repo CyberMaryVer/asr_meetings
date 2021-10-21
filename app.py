@@ -121,7 +121,8 @@ def main():
         settings_form = st.sidebar.form("settings")
         with settings_form:
             st.subheader("Настройки")
-            test = st.checkbox("Использовать тестовый файл")
+            test = st.checkbox("Использовать тестовый аудио")
+            test_ = st.checkbox("Использовать тестовый текст")
             frag = st.checkbox("Использовать для фрагмента")
             num_frag = st.number_input("chunks", min_value=10, max_value=100, step=10)
             num = num_frag if frag else None
@@ -166,7 +167,21 @@ def main():
                 else:
                     st.error("Файл не загружен")
 
-        if audio_file is not None and not test:
+        if test_:
+            text_file = st.file_uploader("Text", type=["txt"])
+
+            if text_file is not None:
+                text = text_file.read()
+                try:
+                    encoding = 'utf-8'
+                    s = str(text, encoding)
+
+                except:
+                    s = str(text)
+                test_res = apply_punkt_to_text(raw_text=s)
+                format_for_streamlit(text=test_res)
+
+        elif audio_file is not None and not test:
             st.session_state.update({"file_size": audio_file.size})
             st.markdown("## Текст")
             st.sidebar.subheader("Audio file")

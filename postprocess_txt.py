@@ -8,10 +8,14 @@ NEXT_SENTENCE_START = [
 ]
 
 
-def merge_txt(txt_file=None):
+def merge_txt(txt_file=None, data=None):
     rows_to_merge = []
-    with open(txt_file, "r", encoding="utf-8") as reader:
-        data = reader.readlines()
+    if txt_file is not None:
+        with open(txt_file, "r", encoding="utf-8") as reader:
+            data = reader.readlines()
+    elif data is not None:
+        data = data.split("\n")
+
     for idx, row in enumerate(data):
         row = row.strip()
         try:

@@ -19,8 +19,13 @@ def apply_te(text, save=False, lan="ru"):
     return enh_text
 
 
-def apply_punkt_to_text(text_file, save=False):
-    text = merge_txt(text_file)
+def apply_punkt_to_text(text_file=None, raw_text=None, save=False):
+    if text_file is not None:
+        text = merge_txt(txt_file=text_file)
+    elif raw_text is not None:
+        text = merge_txt(data=raw_text)
+    else:
+        raise AttributeError("Should indicate text_file or raw_text attribute")
 
     enh_text = []
     for sent in text.split("."):
@@ -28,8 +33,7 @@ def apply_punkt_to_text(text_file, save=False):
         enh_text.append(sent)
 
     text = ' '.join(enh_text)
-    text = text.replace(",,", ",")
-    # text = text.replace("ТРАНСКРИПЦИЯ.", "ТРАНСКРИПЦИЯ\n")
+    text = text.replace(",,", ",").replace(" ,", ",")
 
     if save:
         with open("punkt.txt", "w", encoding="utf-8") as writer:
