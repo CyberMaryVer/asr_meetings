@@ -1,6 +1,7 @@
 ## Text punctuation and NER selection
 
-#### API for debugging
+#### API for basic speech recognition
+[streamlit demo](https://share.streamlit.io/cybermaryver/asr_meetings/app.py)
 ![img](images/demo.gif)
 
 #### Usage
